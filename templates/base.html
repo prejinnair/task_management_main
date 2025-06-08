@@ -1,0 +1,117 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Task Manager{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Feather Icons for UI -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <a href="{% url 'core:dashboard' %}" class="flex items-center text-xl font-semibold text-blue-600">
+                        <i data-feather="layers" class="w-6 h-6 mr-1"></i>
+                        TaskFlow
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'tasks:task_list' %}" class="hover:text-blue-600">Tasks</a>
+                        <a href="{% url 'teams:team_list' %}" class="hover:text-blue-600">Teams</a>
+                        <a href="{% url 'projects:project_list' %}" class="hover:text-blue-600">Projects</a>
+                    <div x-data="{ open: false }" class="relative inline-block text-left">
+                        <button @click="open = !open" class="flex items-center gap-2 focus:outline-none hover:text-blue-600">
+                            <img src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}/static/images/default-avatar.png{% endif %}" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-gray-300">
+                            <span class="hidden sm:inline-block font-medium text-gray-700">{{ user.name|default:user.email }}</span>
+                            <i data-feather="chevron-down" class="w-4 h-4 text-gray-600"></i>
+                        </button>
+
+                        <div
+                            x-show="open"
+                            @click.outside="open = false"
+                            x-transition
+                            class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50"
+                        >
+                            <a href="{% url 'accounts:profile' %}" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+                            <hr class="border-t" />
+                            <a href="{% url 'accounts:logout' %}" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a>
+                        </div>
+                    </div>
+
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="hover:text-blue-600">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Alerts -->
+<div class="max-w-7xl mx-auto px-4 py-2">
+    {% if messages %}
+        {% for message in messages %}
+            <div
+                class="alert-message p-4 mb-3 rounded-md text-sm font-medium
+                    {% if message.tags == 'success' %}bg-green-100 text-green-800
+                    {% elif message.tags == 'error' %}bg-red-100 text-red-800
+                    {% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-800
+                    {% else %}bg-blue-100 text-blue-800{% endif %}"
+            >
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+    <!-- Main Content -->
+    <main class="flex-grow py-4">
+        <div class="max-w-7xl mx-auto px-4">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t py-3 text-center text-sm text-gray-500">
+        © {{ year|default:"2025" }} TaskFlow. Built with ❤️ by Prejin.
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        feather.replace()
+    </script>
+<script>
+  // Wait for DOM to load
+  document.addEventListener('DOMContentLoaded', () => {
+    const alerts = document.querySelectorAll('.alert-message');
+    alerts.forEach(alert => {
+      // Set timeout to hide alert after 4 seconds
+      setTimeout(() => {
+        // Add transition for opacity
+        alert.style.transition = 'opacity 0.5s ease';
+        alert.style.opacity = '0';
+        // After transition ends, remove element from DOM
+        alert.addEventListener('transitionend', () => alert.remove());
+      }, 4000);
+    });
+  });
+</script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

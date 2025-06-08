@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login | TaskFlow{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+    <div class="w-full max-w-md bg-white shadow-md rounded-lg p-6 mt-10">
+        <h2 class="text-2xl font-semibold text-blue-600 text-center mb-6 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-right-to-bracket"></i> Login to TaskFlow
+        </h2>
+
+        <form method="post" novalidate class="space-y-4">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label_tag }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-sm text-red-600 mt-1">{{ field.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition duration-200 flex justify-center items-center gap-2">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+            </button>
+        </form>
+
+        <div class="mt-4 text-center">
+            <a href="{% url 'accounts:reset_password' %}" class="text-sm text-blue-600 hover:underline">
+                Forgot password?
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
