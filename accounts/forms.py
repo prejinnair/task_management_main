@@ -39,7 +39,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('email', 'name', 'role')
+        fields = ('email', 'name', 'role', 'is_active', 'is_staff', 'is_superuser', 'password1', 'password2')
 
     def clean_password2(self):
         pw1 = self.cleaned_data.get("password1")
@@ -77,11 +77,9 @@ class UserCreationForm(forms.ModelForm):
 
 
 class UserChangeForm(forms.ModelForm):
-    password = ReadOnlyPasswordHashField()
-
     class Meta:
         model = User
-        fields = ('email', 'name', 'password', 'is_active', 'is_staff', 'role')
+        fields = ('email', 'name', 'is_active', 'is_staff', 'role')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

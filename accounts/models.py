@@ -40,6 +40,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
 
     date_joined = models.DateTimeField(default=timezone.now)
+    last_login = models.DateTimeField(null=True, blank=True)
+    teams = models.ManyToManyField('teams.Team', blank=True, related_name='users')
+    projects = models.ManyToManyField('projects.Project', blank=True, related_name='users')
+    
 
     objects = UserManager()
 
